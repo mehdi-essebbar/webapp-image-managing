@@ -1,0 +1,26 @@
+version: "3"
+services:
+  db:
+    image: postgres
+  backend:
+    build: ./backend
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    container_name: backend
+    volumes:
+      - ./backend:/backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  frontend:
+    image: frontend
+    build: ./frontend
+    command: bash -c "npm run start"
+    ports:
+      - 8080:8080
+    volumes:
+      - ./frontend:/frontend:rw
+      - node_modules:/frontend/node_modules
+
+volumes:
+  node_modules:
